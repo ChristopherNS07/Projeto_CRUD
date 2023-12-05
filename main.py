@@ -76,3 +76,24 @@ while True:
 
                             pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
                             pacienteDAO_instancia.cadastrar_paciente(novo_paciente)
+            case 3:
+                print("*** Consulta ao Cadastro de pacientes ***")
+                op_consulta = int(input("\n1. Consulta Única por CPF\n2. Consulta total\n0. Voltar ao "
+                                  "Menu\n\nEscolha uma opção: "))
+                os.system("cls")
+
+                if op_consulta == 1:
+                    cpf_procurado = input("Digite o CPF do Paciente: ")
+                    pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
+                    pacienteDAO_instancia.consultar_paciente(cpf_procurado)
+
+                elif op_consulta == 2:
+                    pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
+                    pacienteDAO_instancia.consultar_todos_pacientes()
+
+                elif op_consulta == 0:
+                    pass # passa para a próxima rotina
+
+                else:
+                    print("Opção inválida\n\nRetornando ao menu principal...")
+                    time.sleep(3)
