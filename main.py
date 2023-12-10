@@ -97,3 +97,10 @@ while True:
                 else:
                     print("Opção inválida\n\nRetornando ao menu principal...")
                     time.sleep(3)
+
+            case 4:
+                print("*** Exclusão de paciente ***")
+                cpf_procurado_paciente = input("\nCPF: ")
+                pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
+                pacienteDAO_instancia.excluir_pacientes(cpf_procurado_paciente)
+
