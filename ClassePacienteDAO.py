@@ -61,7 +61,7 @@ class PacienteDAO:
                "DTNASC_PACIENTE, SEXO_PACIENTE FROM TB_PACIENTE"
 
         try:
-            cursor.e-xecute(sql)
+            cursor.execute(sql)
             resultado = cursor.fetchall()
 
             if len(resultado) == 0:
@@ -129,3 +129,78 @@ class PacienteDAO:
 
         except Exception as e:
             print("Erro: ", e)
+
+    def editar_paciente(self, cpf_procurado):
+        cursor = self.conexao.conexao.cursor()
+        sql = "SELECT CPF_PACIENTE FROM TB_PACIENTE WHERE CPF_PACIENTE = %s"
+        cursor.execute(sql, (cpf_procurado,))
+        resultado = cursor.fetchall()
+
+        if len(resultado) == 0:
+            os.system("cls")
+            print("Registro não encontrado!")
+            time.sleep(3)
+
+        else:
+
+            cpf_paciente = input("Novo CPF: ")
+            cursor.execute(sql, (cpf_paciente,))
+            resultado = cursor.fetchall()
+
+            if len(resultado) != 0 and cpf_paciente != cpf_procurado:
+                os.system("cls")
+                print("CPF já cadastrado para outro paciente.")
+                time.sleep(3)
+
+            else:
+                rg_paciente = input("Novo RG: ")
+
+                sql = "SELECT RG_PACIENTE FROM TB_PACIENTE WHERE RG_PACIENTE = %s"
+                sql2 = "SELECT RG_PACIENTE FROM TB_PACIENTE WHERE CPF_PACIENTE = %s"
+
+                cursor.execute(sql, (rg_paciente,))
+                resultado = cursor.fetchall()
+
+                cursor.execute(sql2, (cpf_procurado,))
+                resultado2 = cursor.fetchall()
+
+                if (len(resultado) != 0 and ((rg_paciente,) in resultado2)) or len(resultado) == 0:
+                    nome_paciente = input("Nome: ")
+                    endereco_paciente = input("Endereço: ")
+                    cep_paciente = input("CEP: ")
+                    celular_paciente = input("Celular: ")
+                    dt_nasc_paciente = input("Dt Nascimento (YYYY-MM-DD):")
+                    sexo_paciente = None
+
+                    while sexo_paciente != 'M' and sexo_paciente != 'F':
+                        sexo_paciente = input("Sexo (M ou F): ")
+                        sexo_paciente = sexo_paciente.upper()
+
+                        if sexo_paciente != 'M' and sexo_paciente != 'F':
+                            os.system('cls')
+                            print("Sexo inválido!")
+                            time.sleep(3)
+                            os.system('cls')
+
+                    sql = "UPDATE TB_PACIENTE SET CPF_PACIENTE = %s, RG_PACIENTE = %s, NOME_PACIENTE = %s, " \
+                          "ENDERECO_PACIENTE = %s, CEP_PACIENTE = %s, CELULAR_PACIENTE = %s, DTNASC_PACIENTE = %s, " \
+                          "SEXO_PACIENTE = %s WHERE CPF_PACIENTE = %s"
+
+                    valores = (cpf_paciente, rg_paciente, nome_paciente, endereco_paciente, cep_paciente,
+                               celular_paciente, dt_nasc_paciente, sexo_paciente, cpf_procurado)
+
+                    try:
+                        cursor.execute(sql, valores)
+                        self.conexao.conexao.commit()
+                        os.system("cls")
+                        print(cursor.rowcount, "registro alterado.")
+                        time.sleep(3)
+
+                    except Exception as e:
+                        print("Erro: ", e)
+
+                else:
+                    os.system("cls")
+                    print("RG já cadastrado para outro paciente!")
+                    time.sleep(3)
+

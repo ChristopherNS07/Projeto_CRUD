@@ -76,8 +76,14 @@ while True:
 
                             pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
                             pacienteDAO_instancia.cadastrar_paciente(novo_paciente)
+            case 2:
+                print("*** Editar cadastro do paciente ***")
+                cpf_procurado = input("\nCPF: ")
+                pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
+                pacienteDAO_instancia.editar_paciente(cpf_procurado)
+
             case 3:
-                print("*** Consulta ao Cadastro de pacientes ***")
+                print("*** Consulta ao cadastro de pacientes ***")
                 op_consulta = int(input("\n1. Consulta Única por CPF\n2. Consulta total\n0. Voltar ao "
                                   "Menu\n\nEscolha uma opção: "))
                 os.system("cls")
