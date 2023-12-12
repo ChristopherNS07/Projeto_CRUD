@@ -2,6 +2,8 @@ import os
 import time
 from tabulate import tabulate
 from IPython.core.display_functions import display
+import pandas as pd
+from tkinter import filedialog
 class PacienteDAO:
     def __init__(self, conexao):
         self.conexao = conexao
@@ -78,6 +80,22 @@ class PacienteDAO:
                 colunas = ['CPF', 'RG', 'NOME', 'ENDERECO', 'CEP', 'CELULAR', 'DT_NASCIMENTO', 'SEXO']
                 tabela = tabulate(resultado, headers=colunas, tablefmt='grid', )
                 display(tabela)
+
+                op_csv = int(input("\nDeseja exportar um relatório em CSV?\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                if op_csv == 1:
+                    df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                    caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                    if caminho:
+                        nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                        df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False, encoding='utf-8-sig')
+
+                        print("Tabela Exportada!")
+
+                    else:
+                        print("Operação cancelada pelo usuário.")
+
                 input("\nPressione uma tecla para continuar...")
 
         except Exception as e:
@@ -203,4 +221,8 @@ class PacienteDAO:
                     os.system("cls")
                     print("RG já cadastrado para outro paciente!")
                     time.sleep(3)
+
+
+
+
 

@@ -2,9 +2,10 @@ import os
 import sys
 import time
 import ClasseConexaoBD as conexao
+import ClasseMedico as medico
 import ClassePaciente as paciente
 import ClassePacienteDAO
-
+import ClasseMedicoDAO
 if __name__ == "__main__":
     conexao = conexao.ConexaoBanco(host="localhost", user="root", password="", database="clinimed")
 
@@ -110,3 +111,75 @@ while True:
                 pacienteDAO_instancia = ClassePacienteDAO.PacienteDAO(conexao)
                 pacienteDAO_instancia.excluir_pacientes(cpf_procurado_paciente)
 
+            case 0:
+                pass # Voltar ao menu principal
+
+            case _:
+                print("Opção inválida !")
+                time.sleep(2)
+
+    elif op_menu_principal == 2:
+        print("***** ÁREA DE MÉDICOS *****")
+        print("1. Cadastrar\n2. Editar Cadastro\n3. Consultar Cadastro\n4. Excluir Cadastro\n0. Voltar ao Menu "
+              "Principal")
+        op_menu_secundario = int(input("\nDigite uma opção: "))
+        os.system("cls")
+
+    match op_menu_secundario:
+        case 1:
+            print("*** Cadastro de Médicos ***")
+            crm_medico = input("\nCRM: ")
+
+            sql = 'SELECT CRM FROM TB_MEDICO WHERE CRM = %s'
+            cursor.execute(sql, (crm_medico,))
+            resultado = cursor.fetchall()
+
+            if len(resultado) != 0:
+                os.system("cls")
+                print("CRM já cadastrado!")
+                time.sleep(3)
+
+            else:
+
+                cpf_medico = input("CPF: ")
+
+                sql = 'SELECT CPF_MEDICO FROM TB_MEDICO WHERE CPF_MEDICO = %s'
+                cursor.execute(sql, (cpf_medico,))
+                resultado = cursor.fetchall()
+
+                if len(resultado) != 0:
+                    os.system("cls")
+                    print("CPF já cadastrado!")
+                    time.sleep(3)
+
+                else:
+                    rg_medico = input("RG: ")
+
+                    sql = 'SELECT RG_MEDICO FROM TB_MEDICO WHERE RG_MEDICO = %s'
+                    cursor.execute(sql, (rg_medico,))
+                    resultado = cursor.fetchall()
+
+                    if len(resultado) != 0:
+                        os.system("cls")
+                        print("RG já cadastrado!")
+                        time.sleep(3)
+
+                    else:
+                        nome_medico = input("Nome: ")
+                        email_medico = input("Email: ")
+                        especialidade_medico = input("Especialidade: ")
+                        dt_admissao = input("Dt Admissão (YYYY-MM-DD): ")
+                        dt_demissao = input("Dt demissão (YYYY-MM-DD): ")
+
+                        if not dt_demissao:
+                            status_medico = "Ativo"
+
+                        else:
+                            status_medico = "Inativo"
+
+                        novo_medico = medico.Medico(crm=crm_medico, cpf=cpf_medico, rg=rg_medico, nome=nome_medico,
+                                                    email=email_medico, especialidade=especialidade_medico,
+                                                    dt_admissao=dt_admissao, dtdemissao=dt_demissao,
+                                                    status=status_medico)
+                        medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+                        medicoDAO_instancia.cadastrar_medico(novo_medico)
