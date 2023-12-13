@@ -150,6 +150,81 @@ class MedicoDAO:
         except Exception as e:
             print("Erro: ", e)
 
+    def editar_medico(self,crm_procurado):
+        cursor = self.conexao.conexao.cursor()
+        sql = "SELECT CRM FROM TB_MEDICO WHERE CRM = %s"
+        cursor.execute(sql, (crm_procurado,))
+        resultado = cursor.fetchall()
+
+        if len(resultado) == 0:
+            os.system("cls")
+            print("Médico não encontrado")
+            time.sleep(2)
+
+        else:
+            novo_crm = input("Novo CRM: ")
+            cursor.execute(sql, (novo_crm,))
+            resultado = cursor.fetchall()
+
+            if len(resultado) != 0 and novo_crm != crm_procurado:
+                os.system("cls")
+                print("CRM já cadastrado para outro médico")
+                time.sleep(2)
+
+            else:
+                cpf_medico = input("CPF: ")
+
+                sql = "SELECT CPF_MEDICO FROM TB_MEDICO WHERE CPF_MEDICO = %s"
+                sql2 = "SELECT CPF_MEDICO FROM TB_MEDICO WHERE CRM = %s"
+
+                cursor.execute(sql, (cpf_medico,))
+                resultado = cursor.fetchall()
+
+                cursor.execute(sql2, (crm_procurado,))
+                resultado2 = cursor.fetchall()
+
+                if (len(resultado) != 0 and ((cpf_medico,) in resultado2)) or len(resultado) == 0:
+                    rg_medico = input("RG: ")
+
+                    sql = "SELECT RG_MEDICO FROM TB_MEDICO WHERE RG_MEDICO = %s"
+                    sql2 = "SELECT RG_MEDICO FROM TB_MEDICO WHERE CRM = %s"
+
+                    cursor.execute(sql, (rg_medico,))
+                    resultado = cursor.fetchall()
+
+                    cursor.execute(sql2, (crm_procurado,))
+                    resultado2 = cursor.fetchall()
+
+                    if (len(resultado) != 0 and ((rg_medico,) in resultado2)) or len(resultado) == 0:
+                        nome_medico = input("Nome: ")
+                        email_medico = input("Email: ")
+                        especialidade_medico = input("Especialidade: ")
+                        dt_admissao_medico = input("Data de Admissão: ")
+
+                        sql = ("UPDATE TB_MEDICO SET CRM = %s, CPF_MEDICO = %s, RG_MEDICO = %s, NOME_MEDICO = %s," \
+                               "EMAIL_MEDICO = %s, ESPECIALIDADE_MEDICO = %s, DTADM_MEDICO = %s WHERE CRM = %s")
+
+                        valores = (novo_crm, cpf_medico, rg_medico, nome_medico, email_medico, especialidade_medico, dt_admissao_medico, crm_procurado)
+
+                        try:
+                            cursor.execute(sql, valores)
+                            self.conexao.conexao.commit()
+                            os.system("cls")
+                            print(cursor.rowcount, "registro alterado.")
+                            time.sleep(2)
+
+                        except Exception as e:
+                            print("Erro: ", e)
+                    else:
+                        os.system("cls")
+                        print("RG já cadastrado em outro médico.")
+                        time.sleep(2)
+                else:
+                    os.system("cls")
+                    print("CPF já cadastrado em outro médico")
+                    time.sleep(2)
+
+
 
 
 

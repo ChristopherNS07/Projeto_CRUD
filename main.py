@@ -183,6 +183,13 @@ while True:
                                                     status=status_medico)
                         medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
                         medicoDAO_instancia.cadastrar_medico(novo_medico)
+        case 2:
+            print("*** Editar registro do médico ***")
+            crm_procurado = input("CRM: ")
+            os.system("cls")
+            medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+            medicoDAO_instancia.editar_medico(crm_procurado)
+
 
         case 3:
             print("*** Consulta ao cadastro do médico ***")
