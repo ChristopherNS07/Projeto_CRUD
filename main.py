@@ -183,3 +183,31 @@ while True:
                                                     status=status_medico)
                         medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
                         medicoDAO_instancia.cadastrar_medico(novo_medico)
+
+        case 3:
+            print("*** Consulta ao cadastro do médico ***")
+            op_consulta = int(input("\n1. Consulta Única por CRM\n2. Consulta total\n0. Voltar ao "
+                                    "Menu\n\nEscolha uma opção: "))
+            os.system("cls")
+
+            if op_consulta == 1:
+                crm_procurado = input("Digite o CRM do Médico: ")
+                MedicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+                MedicoDAO_instancia.consultar_medico(crm_procurado)
+
+            elif op_consulta == 2:
+                MedicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+                MedicoDAO_instancia.consultar_todos_medicos()
+
+            elif op_consulta == 0:
+                pass  # passa para a próxima rotina
+
+            else:
+                print("Opção inválida\n\nRetornando ao menu principal...")
+                time.sleep(3)
+
+        case 4:
+            print("*** Excluir Médico ***")
+            crm_procurado = input("CRM: ")
+            MedicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+            MedicoDAO_instancia.excluir_medico(crm_procurado)

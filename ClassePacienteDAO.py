@@ -135,7 +135,7 @@ class PacienteDAO:
                     self.conexao.conexao.commit()
 
                     os.system("cls")
-                    print("Cadastro Excluido com Sucesso!")
+                    print("Cadastro excluido com sucesso!")
                     time.sleep(2)
                     input("Pressione uma tecla para continuar...")
                 elif exclusao.upper() == "N":
