@@ -120,8 +120,8 @@ while True:
 
     elif op_menu_principal == 2:
         print("***** ÁREA DE MÉDICOS *****")
-        print("1. Cadastrar\n2. Editar Cadastro\n3. Consultar Cadastro\n4. Excluir Cadastro\n0. Voltar ao Menu "
-              "Principal")
+        print("1. Cadastrar\n2. Editar Cadastro\n3. Consultar Cadastro\n4. Excluir Cadastro\n5. Desligar Médico"
+              "\n6. Religar Médico\n0. Voltar ao Menu Principal")
         op_menu_secundario = int(input("\nDigite uma opção: "))
         os.system("cls")
 
@@ -218,3 +218,19 @@ while True:
             crm_procurado = input("CRM: ")
             MedicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
             MedicoDAO_instancia.excluir_medico(crm_procurado)
+
+        case 5:
+            print("*** Desligar Médico ***")
+            crm_procurado = input("Digite o CRM do médico: ")
+            os.system("cls")
+
+            medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+            medicoDAO_instancia.desligar_medico(crm_procurado)
+
+        case 6:
+            print("*** Religar Médico ***")
+            crm_procurado = input("Digite o CRM do médico: ")
+            os.system("cls")
+
+            medicoDAO_instancia = ClasseMedicoDAO.MedicoDAO(conexao)
+            medicoDAO_instancia.religar_medico(crm_procurado)
