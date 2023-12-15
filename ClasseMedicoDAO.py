@@ -239,43 +239,55 @@ class MedicoDAO:
                 time.sleep(2)
 
             else:
-                op_desligamento = int(input(f"Deseja inativar o médico{nome_medico[0][0]}?\n1 - Sim ou 2 - Não\n\n"))
-                data_desligamento = input("Data do Desligamento (YYYY-MM-DD): ")
-                data_desligamento = datetime.strptime(data_desligamento, '%Y-%m-%d')
+                sql = "SELECT STATUS_MEDICO FROM TB_MEDICO WHERE CRM = %s"
+                cursor.execute(sql, (crm_procurado,))
+                resultado = cursor.fetchall()
+                status_medico = resultado[0][0]
 
-                if op_desligamento == 1:
-                    sql = "SELECT ID FROM TB_MEDICO WHERE CRM = %s"
-                    cursor.execute(sql, (crm_procurado,))
-                    id_medico = cursor.fetchall()
+                if status_medico == "Inativo":
+                    os.system('cls')
+                    input("Médico já está inativo!\n\nPressione uma tecla para voltar...")
+                    time.sleep(3)
+                else:
+                    op_desligamento = int(input(f"Deseja inativar o médico {nome_medico[0][0]}?\n1 - Sim ou 2 - Não\n\n"))
 
-                    sql = "SELECT DT_CONSULTA FROM TB_CONSULTA WHERE ID_MEDICO = %s ORDER BY DT_CONSULTA DESC"
-                    cursor.execute(sql, (id_medico[0][0],))
-                    resultado = cursor.fetchall()
 
-                    if not resultado:
-                        resultado = datetime.strptime(str('1111-11-11'), '%Y-%m-%d')
+                    if op_desligamento == 1:
+                        data_desligamento = input("Data do Desligamento (YYYY-MM-DD): ")
+                        data_desligamento = datetime.strptime(data_desligamento, '%Y-%m-%d')
 
-                    else:
-                        resultado = f"{str(resultado[0][0].year)}-{str(resultado[0][0].month)}-{str(resultado[0][0].day)}"
-                        resultado = datetime.strptime(resultado, "%Y-%m-%d")
+                        sql = "SELECT ID FROM TB_MEDICO WHERE CRM = %s"
+                        cursor.execute(sql, (crm_procurado,))
+                        id_medico = cursor.fetchall()
 
-                    if resultado >= data_desligamento:
-                        os.system("cls")
-                        print("Médico não poderá ser desligado, pois possui consultas vinculadas ao seu cadastro"
-                              "com data maior que ou igual à data inserida para o desligamento.")
+                        sql = "SELECT DT_CONSULTA FROM TB_CONSULTA WHERE ID_MEDICO = %s ORDER BY DT_CONSULTA DESC"
+                        cursor.execute(sql, (id_medico[0][0],))
+                        resultado = cursor.fetchall()
 
-                        input("\nPressione uma tecla para continuar...")
+                        if not resultado:
+                            resultado = datetime.strptime(str('1111-11-11'), '%Y-%m-%d')
 
-                    else:
-                        os.system("cls")
-                        status_medico = "Inativo"
-                        sql = "UPDATE TB_MEDICO SET DTDEM_MEDICO =  %s, STATUS_MEDICO = %s WHERE ID = %s"
-                        valores = (data_desligamento, status_medico, id_medico[0][0])
-                        cursor.execute(sql, valores)
-                        self.conexao.conexao.commit()
+                        else:
+                            resultado = f"{str(resultado[0][0].year)}-{str(resultado[0][0].month)}-{str(resultado[0][0].day)}"
+                            resultado = datetime.strptime(resultado, "%Y-%m-%d")
 
-                        print(f"O médico {nome_medico[0][0]} foi desligado!")
-                        input("\nPressione uma tecla para continuar...")
+                        if resultado >= data_desligamento:
+                            os.system("cls")
+                            print("Médico não poderá ser desligado, pois possui consultas vinculadas ao seu cadastro"
+                                  " com data maior que ou igual à data inserida para o desligamento.")
+
+                            input("\nPressione uma tecla para continuar...")
+
+                        else:
+                            os.system("cls")
+                            status_medico = "Inativo"
+                            sql = "UPDATE TB_MEDICO SET DTDEM_MEDICO =  %s, STATUS_MEDICO = %s WHERE ID = %s"
+                            valores = (data_desligamento, status_medico, id_medico[0][0])
+                            cursor.execute(sql, valores)
+                            self.conexao.conexao.commit()
+
+                            print(f"O médico {nome_medico[0][0]} foi desligado!")
+                            input("\nPressione uma tecla para continuar...")
 
         except Exception as e:
             print("Erro: ", e)
@@ -305,7 +317,7 @@ class MedicoDAO:
 
                 else:
                     status_medico = "Ativo"
-                    dt_dem_medico = '0000-00-00'
+                    dt_dem_medico = ""
 
                     sql = "UPDATE TB_MEDICO SET DTDEM_MEDICO = %s, STATUS_MEDICO = %s WHERE CRM = %s"
                     valores = (dt_dem_medico, status_medico, crm_procurado)
