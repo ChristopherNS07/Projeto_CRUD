@@ -316,6 +316,13 @@ while True:
                                                                       id_paciente=id_paciente)
                                     consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
                                     consultaDAO_instancia.cadastrar_consulta(nova_consulta)
+            case 4:
+                print("*** Desmarcar Consulta ***")
+                cod_consulta = input("\nDigite o código da consulta: ")
+                os.system('cls')
+                consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+                consultaDAO_instancia.desmarcar_consulta(cod_consulta)
+
     elif op_menu_principal == 4:
         pass
 
