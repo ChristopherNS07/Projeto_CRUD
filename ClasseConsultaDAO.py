@@ -78,3 +78,70 @@ class ConsultaDAO:
             print("Erro: ", e)
             input("\nPressione uma tecla para retornar...")
 
+    def visualizar_cosulta(self, op_consulta):
+
+        cursor = self.conexao.conexao.cursor()
+        sql = '''SELECT tb_consulta.COD_CONSULTA, tb_consulta.DT_CONSULTA, tb_consulta.HR_CONSULTA,
+                 tb_medico.NOME_MEDICO, tb_paciente.NOME_PACIENTE
+                 FROM TB_CONSULTA
+                 INNER JOIN  TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID
+                 INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                 WHERE TB_CONSULTA.COD_CONSULTA = %s'''
+
+        try:
+
+
+            if op_consulta == 1:
+                cod_cosulta = input('Digite o codigo da consulta: ')
+                cursor.execute(sql, (cod_cosulta,))
+                resultado = cursor.fetchall()
+
+                if len(resultado) == 0:
+                    os.system('cls')
+                    print('Consulta não encontrada!\n')
+                    time.sleep(3)
+
+                else:
+                    resultados = []
+
+                    for result in resultado:
+                        result = list(result)
+                        resultados.append(result)
+
+                    colunas = ['COD_CONSULTA', 'DT_CONSULTA', 'HR_CONSULTA', 'NOME_MEDICO','NOME_PACIENTE']
+                    tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                    display(tabela)
+
+                    input("\nPressione uma tecla para voltar ao menu principal...\n")
+
+            elif op_consulta == 2:
+                sql = '''SELECT tb_consulta.COD_CONSULTA, tb_consulta.DT_CONSULTA, tb_consulta.HR_CONSULTA,
+                                 tb_medico.NOME_MEDICO, tb_paciente.NOME_PACIENTE
+                                 FROM TB_CONSULTA
+                                 INNER JOIN  TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID
+                                 INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID '''
+                cursor.execute(sql)
+                resultado = cursor.fetchall()
+
+                resultados = []
+
+                for result in resultado:
+                    result = list(result)
+                    resultados.append(result)
+
+                colunas = ['COD_CONSULTA', 'DT_CONSULTA', 'HR_CONSULTA', 'NOME_MEDICO', 'NOME_PACIENTE']
+                tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                display(tabela)
+
+                input("\nPressione uma tecla para voltar ao menu principal...")
+
+            else:
+                print("Digito inválido!")
+                time.sleep(3)
+
+        except Exception as e:
+            print('Erro: ', e)
+
+
+
+
