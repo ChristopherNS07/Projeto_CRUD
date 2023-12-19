@@ -317,12 +317,27 @@ while True:
                                     consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
                                     consultaDAO_instancia.cadastrar_consulta(nova_consulta)
 
+            case 2:
+                print("*** Editar Consulta ***")
+                cod_consulta = input("Digite o código da consulta: ")
+                os.system('cls')
+                consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+                consultaDAO_instancia.editar_consulta(cod_consulta)
+
             case 3:
                 print("*** Visualizar Consulta ***")
                 op_consulta = int(input('\n1 - Consulta única\n2 - Consulta total\n\nDigite uma opção: '))
                 os.system('cls')
-                consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
-                consultaDAO_instancia.visualizar_cosulta(op_consulta)
+                if op_consulta == 1:
+                    cod_consulta = input("Digite o codigo da consulta a ser alterado: ")
+                    consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+                    consultaDAO_instancia.visualizar_cosulta(cod_consulta)
+                elif op_consulta == 2:
+                    consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+                    consultaDAO_instancia.visualizar_total_consultas()
+                else:
+                    print("Digito inválido!")
+                    time.sleep(3)
 
             case 4:
                 print("*** Desmarcar Consulta ***")
