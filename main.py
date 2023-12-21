@@ -238,7 +238,7 @@ while True:
                 medicoDAO_instancia.religar_medico(crm_procurado)
 
     elif op_menu_principal == 3:
-        print("***** ÁREA DE COSULTAS *****")
+        print("***** ÁREA DE CONSULTAS *****")
         op_menu_secundario = int(input("\n1. Marcar Consulta\n2. Editar Consulta\n3. Visualizar Consulta\n4. Desmarcar Consulta\n5. Desvincular Consulta\n0. Voltar ao Menu Pricipal \n\nDigite uma opção: "))
         os.system("cls")  # Comando para limpar a tela
 
@@ -264,7 +264,8 @@ while True:
                     cursor.execute(sql, (id_medico,))
                     resultado = cursor.fetchall()
                     status_medico = resultado[0][0]
-                    #Validação do status do médico, se for inativo não permitir cadastro
+
+                    # Validação do status do médico, se for inativo não permitir cadastro
                     if status_medico == 'Inativo':
                         print("Não é possivel marcar consultas para este médico, pois ele possui o status Inativo!")
                         time.sleep(3)
@@ -331,7 +332,7 @@ while True:
                 if op_consulta == 1:
                     cod_consulta = input("Digite o codigo da consulta a ser alterado: ")
                     consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
-                    consultaDAO_instancia.visualizar_cosulta(cod_consulta)
+                    consultaDAO_instancia.visualizar_consulta(cod_consulta)
                 elif op_consulta == 2:
                     consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
                     consultaDAO_instancia.visualizar_total_consultas()
@@ -345,6 +346,14 @@ while True:
                 os.system('cls')
                 consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
                 consultaDAO_instancia.desmarcar_consulta(cod_consulta)
+
+            case 5:
+                print("*** Desvincular Consultas ***")
+                op_menu_secundario = int(input("\n1. Por médico\n2. Por paciente\n0. Voltar\n\nEscolha uma opção: "))
+                os.system('cls')
+
+                consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+                consultaDAO_instancia.desvincular_medico(op_menu_secundario)
 
     elif op_menu_principal == 4:
         pass
