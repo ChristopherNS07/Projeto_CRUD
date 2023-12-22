@@ -378,7 +378,7 @@ class ConsultaDAO:
                                             print(f"Consulta {cod_consulta} atribuida para o "
                                                   f"médico {nome_medico} com sucesso!")
 
-                                        index += 1
+                                            index += 1
 
                                     input("\nPressione enter para continuar...")
 
@@ -398,7 +398,7 @@ class ConsultaDAO:
 
         if op_menu == 2:
             cpf_paciente = input("Digite o cpf do paciente: ")
-            sql = "SELECT ID FROM TB_PACIENTE WHERE CPF_PACIENTE = %s"
+            sql = "SELECT ID, NOME_PACIENTE FROM TB_PACIENTE WHERE CPF_PACIENTE = %s"
 
             try:
                 cursor.execute(sql, (cpf_paciente,))
@@ -410,51 +410,78 @@ class ConsultaDAO:
                     time.sleep(3)
                 else:
                     id_paciente = resultado[0][0]
-                    sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA,
-                             TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
-                             INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID
-                             INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
-                             WHERE ID_PACIENTE = %s
-                             ORDER BY DT_CONSULTA, HR_CONSULTA ASC'''
+                    nome_paciente = resultado[0][1]
+                    dt_inicial = input("Data inicial: ")
+                    dt_final = input("Data final: ")
 
-                    valores = (id_paciente,)
-                    cursor.execute(sql, valores)
-                    resultado_paciente = cursor.fetchall()
+                    dt_inicial = datetime.strptime(dt_inicial, "%Y-%m-%d")
+                    dt_final = datetime.strptime(dt_final, "%Y-%m-%d")
 
-                    if len(resultado_paciente) == 0:
+                    if dt_inicial > dt_final:
                         os.system('cls')
-                        print('Não existe consulta atrelada ao paciente.')
+                        print("Data final não poderá ser menor que a data inicial.")
                         time.sleep(3)
+
                     else:
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA,
+                                 TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                 INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID
+                                 INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                 WHERE ID_PACIENTE = %s AND TB_CONSULTA.DT_CONSULTA >= %s
+                                 AND TB_CONSULTA.DT_CONSULTA <= %s
+                                 ORDER BY DT_CONSULTA, HR_CONSULTA ASC'''
 
-                        resultados = []
+                        valores = (id_paciente, dt_inicial, dt_final,)
+                        cursor.execute(sql, valores)
+                        resultado_paciente = cursor.fetchall()
 
-                        for result in resultado_paciente:
-                            result = list(result)
-                            resultados.append(result)
-
-
-                        colunas = ['COD CONSULTA', 'DATA CONSULTA', 'HR_CONSULTA', 'NOME MÉDICO', 'NOME PACIENTE']
-                        tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
-                        display(tabela)
-
-                        op_decisao = int(input("\nDeseja desmarcar todas as consultas vinculadas a esse paciente ?"
-                                               "\n1 - Sim\n2 - Não\n\nDigite uma opção:  "))
-                        if op_decisao == 1:
-                            sql = "DELETE FROM TB_CONSULTA WHERE ID_PACIENTE = %s"
-                            cursor.execute(sql, (id_paciente,))
-                            self.conexao.conexao.commit()
-                            input("\nTodas as consulta desmarcadas com sucesso!\nPressione uma tecla para continuar...")
-                        elif op_decisao == 2:
-                            print("Retornando ao menu principal...")
+                        if len(resultado_paciente) == 0:
+                            os.system('cls')
+                            print('Não existe consulta atrelada ao paciente.')
                             time.sleep(3)
                         else:
-                            print("\Opção inválida!")
-                            time.sleep(3)
+
+                            resultados = []
+
+                            for result in resultado_paciente:
+                                result = list(result)
+                                resultados.append(result)
+
+
+                            colunas = ['COD CONSULTA', 'DATA CONSULTA', 'HR_CONSULTA', 'NOME MÉDICO', 'NOME PACIENTE']
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+
+                            op_decisao = int(input(f"\nDeseja desmarcar a consulta vinculada ao paciente {nome_paciente} ?\n"
+                                                   "OBS.: as consultas serão excluídas do sistema."
+                                                   "\n1 - Sim\n2 - Não\n\nDigite uma opção:  "))
+                            if op_decisao == 1:
+                                sql = "DELETE FROM TB_CONSULTA WHERE ID_PACIENTE = %s"
+                                cursor.execute(sql, (id_paciente,))
+                                self.conexao.conexao.commit()
+                                input(f"\nConsulta do paciente {nome_paciente} desmarcada com sucesso!"
+                                      f"\nPressione uma tecla para continuar...")
+
+                            elif op_decisao == 2:
+                                print("Retornando ao menu principal...")
+                                time.sleep(3)
+
+                            else:
+                                print("\Opção inválida!")
+                                time.sleep(3)
 
             except Exception as e:
                 print("Erro: ", e)
                 time.sleep(3)
+
+        elif op_menu == 0:
+            print("Retornando ao menu principal...")
+            time.sleep(3)
+
+        else:
+            os.system('cls')
+            print("Retornando ao menu principal...")
+            time.sleep(3)
 
 
 
