@@ -356,7 +356,15 @@ while True:
                 consultaDAO_instancia.desvincular_medico(op_menu_secundario)
 
     elif op_menu_principal == 4:
-        pass
+        print("** Agenda **")
+        op_menu_secundario = int(input("\n1. Agenda por Paciente\n2. Agenda por Médico\n3. Agenda por Período\n"
+                                       "4. Agenda por Horário\n5. Agenda por Paciente + Período\n6. Agenda por "
+                                       " Médico + Período\n7. Agenda por horário + periodo\n0. Voltar ao Menu\n\n"
+                                       "Escolha uma opção: "))
+        os.system('cls')
+
+        consultaDAO_instancia = ClasseConsultaDAO.ConsultaDAO(conexao)
+        consultaDAO_instancia.consultar_agenda(op_menu_secundario)
 
     elif op_menu_principal == 0:
         print("Encerrando sistema...")

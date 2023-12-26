@@ -4,7 +4,7 @@ import mysql.connector
 import pandas as pd
 from datetime import datetime
 from tkinter import filedialog
-from tabulate import  tabulate
+from tabulate import tabulate
 from IPython.core.display_functions import display
 class ConsultaDAO:
     def __init__(self, conexao):
@@ -482,6 +482,522 @@ class ConsultaDAO:
             os.system('cls')
             print("Retornando ao menu principal...")
             time.sleep(3)
+
+    def consultar_agenda(self, op_menu):
+        cursor = self.conexao.conexao.cursor()
+
+        match op_menu:
+            case 1:
+                try:
+                    #Consulta por paciente
+                    cpf_paciente = int(input("CPF do paciente: "))
+                    sql = '''SELECT ID, NOME_PACIENTE FROM TB_PACIENTE WHERE CPF_PACIENTE = %s'''
+                    cursor.execute(sql, (cpf_paciente,))
+                    resultado = cursor.fetchall()
+
+                    if len(resultado) == 0:
+                        os.system('cls')
+                        print("Cadastro não encontrado!")
+                        time.sleep(3)
+
+                    else:
+                        resultados = []
+
+                        for result in resultado:
+                            result = list(result)
+                            resultados.append(result)
+
+                        id_paciente = resultados[0][0]
+                        nome_paciente = resultados[0][1]
+
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                        TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                        INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                        INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                        WHERE TB_CONSULTA.ID_PACIENTE = %s
+                        ORDER BY DT_CONSULTA, HR_CONSULTA ASC'''
+                        valor = (id_paciente,)
+                        cursor.execute(sql, valor)
+                        resultado = cursor.fetchall()
+
+                        if len(resultado) == 0:
+                            os.system('cls')
+                            print("Consulta não encontrada!")
+                            time.sleep(3)
+
+                        else:
+                            resultados = []
+
+                            for result in resultado:
+                                result = list(result)
+                                resultados.append(result)
+
+                            colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO", "NOME PACIENTE"]
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+                            print(f"consultas do paciente {nome_paciente} encontrada com sucesso!")
+                            op_csv = int(input("\nDeseja exportar um relatório em CSV?\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                            if op_csv == 1:
+                                df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                if caminho:
+                                    nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                    df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                              encoding='utf-8-sig')
+
+                                    print("Tabela Exportada!")
+                                else:
+                                    print("Operação cancelada pelo usuário.")
+
+                            input("\nPressione uma tecla para voltar ao menu principal...")
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 2:
+                try:
+                    # Consulta por médico
+                    crm_medico = int(input("CRM: "))
+                    sql = '''SELECT ID, NOME_MEDICO FROM TB_MEDICO WHERE CRM = %s'''
+                    cursor.execute(sql, (crm_medico,))
+                    resultado = cursor.fetchall()
+
+                    if len(resultado) == 0:
+                        os.system('cls')
+                        print("Médico não encontrado!")
+                        time.sleep(3)
+
+                    else:
+                        resultados = []
+
+                        for result in resultado:
+                            result = list(result)
+                            resultados.append(result)
+
+                        id_medico = resultados[0][0]
+                        nome_medico = resultados[0][1]
+
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                   TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                   INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                   INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                   WHERE TB_CONSULTA.ID_MEDICO = %s
+                                   ORDER BY DT_CONSULTA ASC'''
+                        valor = (id_medico,)
+                        cursor.execute(sql, valor)
+                        resultado = cursor.fetchall()
+
+                        if len(resultado) == 0:
+                            os.system('cls')
+                            print("Consulta não encontrada!")
+                            time.sleep(3)
+
+                        else:
+                            resultados = []
+
+                            for result in resultado:
+                                result = list(result)
+                                resultados.append(result)
+
+                            colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                       "NOME PACIENTE"]
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+                            print(f"Consultas do paciente {nome_medico} encontradas com sucesso!")
+                            op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                               "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                            if op_csv == 1:
+                                df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                if caminho:
+                                    nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                    df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                              encoding='utf-8-sig')
+
+                                    print("Tabela Exportada!")
+
+                                else:
+                                    print("Operação cancelada pelo usuário.")
+
+                            input("\nPressione uma tecla para voltar ao menu principal...")
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 3:
+                # Consultas por Período (dt inicial e dt_final)
+                try:
+                    dt_inicial = input("Data inicial (YYYY-mm-dd): ")
+                    dt_final = input("Data inicial (YYYY-mm-dd): ")
+
+                    dt_inicial = datetime.strptime(dt_inicial, '%Y-%m-%d')
+                    dt_final = datetime.strptime(dt_final, '%Y-%m-%d')
+
+                    if dt_final <= dt_inicial:
+                        os.system('cls')
+                        print("Data final não pode ser menor que a data inicial.")
+                        time.sleep(3)
+
+                    else:
+
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                       TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                       INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                       INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                       WHERE TB_CONSULTA.DT_CONSULTA >= %s AND TB_CONSULTA.DT_CONSULTA <= %s
+                                       ORDER BY DT_CONSULTA ASC'''
+                        valor = (dt_inicial, dt_final,)
+                        cursor.execute(sql, valor)
+                        resultado = cursor.fetchall()
+
+                        if len(resultado) == 0:
+                            os.system('cls')
+                            print("Consulta não encontrada!")
+                            time.sleep(3)
+
+                        else:
+                            resultados = []
+
+                            for result in resultado:
+                                result = list(result)
+                                resultados.append(result)
+
+                            colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                       "NOME PACIENTE"]
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+                            print(f"Todas as consultas encontradas com sucesso!")
+                            op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                               "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                            if op_csv == 1:
+                                df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                if caminho:
+                                    nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                    df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                              encoding='utf-8-sig')
+
+                                    print("Tabela Exportada!")
+
+                                else:
+                                    print("Operação cancelada pelo usuário.")
+
+                            input("\nPressione uma tecla para voltar ao menu principal...")
+
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 4:
+                #Consultas por horário (hr e hr_final)
+                try:
+                    hr_inicial = input("Hora inicial (HH:MM:SS): ")
+                    hr_final = input("Hora final (HH:MM:SS): ")
+                    if hr_final <= hr_inicial:
+                        os.system('cls')
+                        print("Hora final não pode ser menor que a hora inicial.")
+                        time.sleep(3)
+
+                    else:
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                       TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                       INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                       INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                       WHERE TB_CONSULTA.HR_CONSULTA >= %s AND TB_CONSULTA.HR_CONSULTA <= %s
+                                       ORDER BY DT_CONSULTA ASC'''
+                        valores = (hr_inicial, hr_final,)
+                        cursor.execute(sql, valores)
+                        resultado = cursor.fetchall()
+
+                        if len(resultado) == 0:
+                            os.system('cls')
+                            print("Não há consulta nesse período !")
+                            time.sleep(3)
+
+                        else:
+                            resultados = []
+
+                            for result in resultado:
+                                result = list(result)
+                                resultados.append(result)
+
+                            colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                       "NOME PACIENTE"]
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+                            input(f"Todas as consultas encontradas com sucesso!")
+                            op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                               "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                            if op_csv == 1:
+                                df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                if caminho:
+                                    nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                    df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                              encoding='utf-8-sig')
+
+                                    print("Tabela Exportada!")
+
+                                else:
+                                    print("Operação cancelada pelo usuário.")
+
+                            input("\nPressione uma tecla para voltar ao menu principal...")
+
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 5:
+                #Consulta por paciente + periodo (cpf + dt inicial + dt final)
+                try:
+                    cpf_paciente = int(input("Digite o CPF do paciente: "))
+                    sql = '''SELECT ID FROM TB_PACIENTE WHERE CPF_PACIENTE = %s'''
+                    cursor.execute(sql, (cpf_paciente,))
+                    resultado = cursor.fetchall()
+
+                    if len(resultado) == 0:
+                        os.system("cls")
+                        print("Paciente não encontrado!")
+                        time.sleep(3)
+
+                    else:
+                        id_paciente = resultado[0][0]
+                        dt_inicial = input("Data inicial (YYYY-mm-dd): ")
+                        dt_final = input("Data final (YYYY-mm-dd): ")
+
+                        dt_inicial = datetime.strptime(dt_inicial, '%Y-%m-%d')
+                        dt_final = datetime.strptime(dt_final, '%Y-%m-%d')
+
+                        if dt_final <= dt_inicial:
+                            os.system('cls')
+                            print("Data final não pode ser menor que a data inicial.")
+                            time.sleep(3)
+
+                        else:
+
+                            sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                           TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                           INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                           INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                           WHERE TB_CONSULTA.ID_PACIENTE = %s AND TB_CONSULTA.DT_CONSULTA >= %s
+                                           AND TB_CONSULTA.DT_CONSULTA <= %s
+                                           ORDER BY DT_CONSULTA ASC'''
+                            valores = (id_paciente, dt_inicial, dt_final,)
+                            cursor.execute(sql, valores)
+                            resultado = cursor.fetchall()
+
+                            if len(resultado) == 0:
+                                os.system('cls')
+                                print("Consulta não encontrada!")
+                                time.sleep(3)
+
+                            else:
+                                resultados = []
+
+                                for result in resultado:
+                                    result = list(result)
+                                    resultados.append(result)
+
+                                colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                           "NOME PACIENTE"]
+                                tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                                display(tabela)
+                                input(f"Todas as consultas encontradas com sucesso!")
+                                op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                                   "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                                if op_csv == 1:
+                                    df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                    caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                    if caminho:
+                                        nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                        df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                                  encoding='utf-8-sig')
+
+                                        print("Tabela Exportada!")
+
+                                    else:
+                                        print("Operação cancelada pelo usuário.")
+
+                                input("\nPressione uma tecla para voltar ao menu principal...")
+
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 6:
+                #Consulta por médico + periodo (crm + dt inicial + dt final)
+                try:
+                    crm_medico = int(input("CRM: "))
+                    sql = '''SELECT ID FROM TB_MEDICO WHERE CRM = %s'''
+                    cursor.execute(sql, (crm_medico,))
+                    resultado = cursor.fetchall()
+
+                    if len(resultado) == 0:
+                        os.system("cls")
+                        print("Médico não encontrado!")
+                        time.sleep(3)
+
+                    else:
+                        id_medico = resultado[0][0]
+                        dt_inicial = input("Data inicial (YYYY-mm-dd): ")
+                        dt_final = input("Data final (YYYY-mm-dd): ")
+
+                        dt_inicial = datetime.strptime(dt_inicial, '%Y-%m-%d')
+                        dt_final = datetime.strptime(dt_final, '%Y-%m-%d')
+
+                        if dt_final <= dt_inicial:
+                            os.system('cls')
+                            print("Data final não pode ser menor que a data inicial.")
+                            time.sleep(3)
+
+                        else:
+
+                            sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                           TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                           INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                           INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                           WHERE TB_CONSULTA.ID_MEDICO = %s AND TB_CONSULTA.DT_CONSULTA >= %s
+                                           AND TB_CONSULTA.DT_CONSULTA <= %s
+                                           ORDER BY DT_CONSULTA ASC'''
+                            valores = (id_medico, dt_inicial, dt_final,)
+                            cursor.execute(sql, valores)
+                            resultado = cursor.fetchall()
+
+                            if len(resultado) == 0:
+                                os.system('cls')
+                                print("Consulta não encontrada!")
+                                time.sleep(3)
+
+                            else:
+                                resultados = []
+
+                                for result in resultado:
+                                    result = list(result)
+                                    resultados.append(result)
+
+                                colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                           "NOME PACIENTE"]
+                                tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                                display(tabela)
+                                input(f"Todas as consultas encontradas com sucesso!")
+                                op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                                   "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                                if op_csv == 1:
+                                    df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                    caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                    if caminho:
+                                        nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                        df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                                  encoding='utf-8-sig')
+
+                                        print("Tabela Exportada!")
+
+                                    else:
+                                        print("Operação cancelada pelo usuário.")
+
+                                input("\nPressione uma tecla para voltar ao menu principal...")
+
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+
+            case 7:
+                # Consulta por periodo + horário (dt inicial + dt final + hr inicial + hr final)
+                try:
+                    dt_inicial = input("Data inicial (YYYY-mm-dd): ")
+                    dt_final = input("Data inicial (YYYY-mm-dd): ")
+                    hr_inicial = input("Hora inicial (HH:MM:SS): ")
+                    hr_final = input("Hora final (HH:MM:SS): ")
+
+                    dt_inicial = datetime.strptime(dt_inicial, '%Y-%m-%d')
+                    dt_final = datetime.strptime(dt_final, '%Y-%m-%d')
+
+                    if dt_final <= dt_inicial:
+                        os.system('cls')
+                        print("Data final não pode ser menor que a data inicial.")
+                        time.sleep(3)
+
+                    elif hr_final <= hr_inicial:
+                        os.system('cls')
+                        print("Hora final não pode ser menor que a hora inicial.")
+
+                    else:
+
+                        sql = '''SELECT TB_CONSULTA.COD_CONSULTA, TB_CONSULTA.DT_CONSULTA, TB_CONSULTA.HR_CONSULTA, 
+                                           TB_MEDICO.NOME_MEDICO, TB_PACIENTE.NOME_PACIENTE FROM TB_CONSULTA
+                                           INNER JOIN TB_MEDICO ON TB_CONSULTA.ID_MEDICO = TB_MEDICO.ID 
+                                           INNER JOIN TB_PACIENTE ON TB_CONSULTA.ID_PACIENTE = TB_PACIENTE.ID
+                                           WHERE TB_CONSULTA.DT_CONSULTA >= %s AND TB_CONSULTA.DT_CONSULTA <= %s
+                                           AND TB_CONSULTA.HR_CONSULTA >= %s AND TB_CONSULTA.HR_CONSULTA <= %s
+                                           ORDER BY DT_CONSULTA ASC'''
+                        valor = (dt_inicial, dt_final, hr_inicial, hr_final)
+                        cursor.execute(sql, valor)
+                        resultado = cursor.fetchall()
+
+                        if len(resultado) == 0:
+                            os.system('cls')
+                            print("Consulta não encontrada!")
+                            time.sleep(3)
+
+                        else:
+                            resultados = []
+
+                            for result in resultado:
+                                result = list(result)
+                                resultados.append(result)
+
+                            colunas = ["CÓDIGO CONSULTA", "DATA CONSULTA", "HORA CONSULTA", "NOME MÉDICO",
+                                       "NOME PACIENTE"]
+                            tabela = tabulate(resultados, headers=colunas, tablefmt='grid')
+                            display(tabela)
+                            input(f"Todas as consultas encontradas com sucesso!")
+                            op_csv = int(input("\nDeseja exportar um relatório em CSV?"
+                                               "\n1 - Sim ou 2 - Não\n\nEscolha uma opção: "))
+
+                            if op_csv == 1:
+                                df = pd.DataFrame(resultados[1:], columns=resultados[0])
+                                caminho = filedialog.askdirectory(title="Escolha o diretório")
+
+                                if caminho:
+                                    nome_arquivo = input("\nDigite um nome para o arquivo: ")
+                                    df.to_csv((caminho + '/' + nome_arquivo + '.csv'), index=False,
+                                              encoding='utf-8-sig')
+
+                                    print("Tabela Exportada!")
+
+                                else:
+                                    print("Operação cancelada pelo usuário.")
+
+                            input("\nPressione uma tecla para voltar ao menu principal...")
+
+
+                except Exception as e:
+                    print("Erro: ", e)
+                    time.sleep(2)
+            case 0:
+                pass
+
+            case _:
+                print("Opção Inválida!")
+                time.sleep(3)
 
 
 
