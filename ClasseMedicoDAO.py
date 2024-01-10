@@ -28,6 +28,8 @@ class MedicoDAO:
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
     def consultar_medico(self, crm_procurado):
         cursor = self.conexao.conexao.cursor()
@@ -54,9 +56,12 @@ class MedicoDAO:
                 tabela = tabulate(resultado, headers=colunas, tablefmt='grid')
                 display(tabela)
                 input("\nPressione uma tecla para continuar...")
+                os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
     def consultar_todos_medicos(self):
         cursor = self.conexao.conexao.cursor()
@@ -96,11 +101,16 @@ class MedicoDAO:
 
                     else:
                         print("Operação cancelada pelo usuário.")
+                        time.sleep(1)
+                        os.system('cls')
 
                 input("\nPressione uma tecla para continuar...")
+                os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
     def excluir_medico(self, crm_procurado):
         cursor = self.conexao.conexao.cursor()
@@ -143,13 +153,17 @@ class MedicoDAO:
                 elif exclusao.upper() == "N":
                     print("Retornando ao menu principal...")
                     time.sleep(3)
+                    os.system('cls')
 
                 else:
                     print("Digito inválido!\n Retornando ao menu principal...")
                     time.sleep(3)
+                    os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
     def editar_medico(self, crm_procurado):
         cursor = self.conexao.conexao.cursor()
@@ -216,6 +230,8 @@ class MedicoDAO:
 
                         except Exception as e:
                             print("Erro: ", e)
+                            input("Pressione uma  tecla para continuar...")
+                            os.system('cls')
                     else:
                         os.system("cls")
                         print("RG já cadastrado em outro médico.")
@@ -288,9 +304,12 @@ class MedicoDAO:
 
                             print(f"O médico {nome_medico[0][0]} foi desligado!")
                             input("\nPressione uma tecla para continuar...")
+                            os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
     def religar_medico(self, crm_procurado):
         cursor = self.conexao.conexao.cursor()
@@ -325,9 +344,12 @@ class MedicoDAO:
                     self.conexao.conexao.commit()
                     os.system('cls')
                     input("Medico reativado no Sistema!\n\nPressione uma tecla para continuar...")
+                    os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
+            os.system('cls')
 
 
 

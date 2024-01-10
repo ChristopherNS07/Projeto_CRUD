@@ -27,8 +27,9 @@ class ConsultaDAO:
             time.sleep(3)
 
         except Exception as e:
+            os.system('cls')
             print("Erro: ", e)
-            input("\nPressione uma tecla para continuar...")
+            input("Pressione uma  tecla para continuar...")
 
     def desmarcar_consulta(self, cod_consulta):
         cursor = self.conexao.conexao.cursor()
@@ -68,18 +69,22 @@ class ConsultaDAO:
                     cursor.execute(sql, (cod_consulta,))
                     self.conexao.conexao.commit()
                     input("\nConsulta desmarcada com sucesso!\nPressione uma tecla para continuar...")
+                    os.system('cls')
 
                 elif op_desmarcar == 2:
+                    os.system('cls')
                     print("Retornando ao meu principal...")
                     time.sleep(2)
 
                 else:
+                    os.system('cls')
                     print("Opção inválida!")
                     time.sleep(2)
 
         except Exception as e:
             print("Erro: ", e)
             input("\nPressione uma tecla para retornar...")
+            os.system('cls')
 
     def visualizar_consulta(self, cod_consulta):
 
@@ -126,11 +131,16 @@ class ConsultaDAO:
 
                         else:
                             print("Operação cancelada pelo usuário.")
+                            time.sleep(2)
+                            os.system('cls')
 
                     input("\nPressione uma tecla para voltar ao menu principal...\n")
+                    os.system('cls')
 
         except Exception as e:
+            os.system('cls')
             print('Erro: ', e)
+            input("Pressione uma  tecla para continuar...")
 
     def visualizar_total_consultas(self):
 
@@ -166,8 +176,11 @@ class ConsultaDAO:
 
             else:
                 print("Operação cancelada pelo usuário.")
+                time.sleep(1)
+                os.system('cls')
 
         input("\nPressione uma tecla para voltar ao menu principal...")
+        os.system('cls')
 
     def editar_consulta(self, cod_consulta):
         cursor = self.conexao.conexao.cursor()
@@ -249,12 +262,17 @@ class ConsultaDAO:
 
                                     except Exception as e:
                                         print("Erro: ", e)
+                                        input("Pressione uma  tecla para continuar...")
+                                        os.system('cls')
                     else:
                         print("Horário indisponivel.\nRetornando ao menu principal...")
                         time.sleep(2)
+                        os.system('cls')
 
         except Exception as e:
+            os.system('cls')
             print("Erro: ", e)
+            input("Pressione uma  tecla para continuar...")
 
     def desvincular_medico(self, op_menu):
         cursor = self.conexao.conexao.cursor()
@@ -381,6 +399,7 @@ class ConsultaDAO:
                                             index += 1
 
                                     input("\nPressione enter para continuar...")
+                                    os.system('cls')
 
                             elif op_desvinculo == 2:
                                 os.system('cls')
@@ -394,7 +413,8 @@ class ConsultaDAO:
 
             except Exception as e:
                 print("Erro: ", e)
-                input("\nPressione enter para retornar...")
+                input("Pressione uma  tecla para continuar...")
+                os.system('cls')
 
         if op_menu == 2:
             cpf_paciente = input("Digite o cpf do paciente: ")
@@ -471,10 +491,13 @@ class ConsultaDAO:
                                 time.sleep(3)
 
             except Exception as e:
+                os.system('cls')
                 print("Erro: ", e)
-                time.sleep(3)
+                input("Pressione uma  tecla para continuar...")
+
 
         elif op_menu == 0:
+            os.system('cls')
             print("Retornando ao menu principal...")
             time.sleep(3)
 
@@ -550,12 +573,16 @@ class ConsultaDAO:
                                     print("Tabela Exportada!")
                                 else:
                                     print("Operação cancelada pelo usuário.")
+                                    time.sleep(1)
+                                    os.system('cls')
 
                             input("\nPressione uma tecla para voltar ao menu principal...")
+                            os.system('cls')
 
                 except Exception as e:
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
+                    os.system('cls')
 
             case 2:
                 try:
@@ -623,12 +650,16 @@ class ConsultaDAO:
 
                                 else:
                                     print("Operação cancelada pelo usuário.")
+                                    time.sleep(1)
+                                    os.system('cls')
 
                             input("\nPressione uma tecla para voltar ao menu principal...")
+                            os.system('cls')
 
                 except Exception as e:
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
+                    os.system('cls')
 
             case 3:
                 # Consultas por Período (dt inicial e dt_final)
@@ -689,13 +720,17 @@ class ConsultaDAO:
 
                                 else:
                                     print("Operação cancelada pelo usuário.")
+                                    time.sleep(1)
+                                    os.system('cls')
 
                             input("\nPressione uma tecla para voltar ao menu principal...")
+                            os.system('cls')
 
 
                 except Exception as e:
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
+                    os.system('cls')
 
             case 4:
                 #Consultas por horário (hr e hr_final)
@@ -753,11 +788,13 @@ class ConsultaDAO:
                                     print("Operação cancelada pelo usuário.")
 
                             input("\nPressione uma tecla para voltar ao menu principal...")
+                            os.system('cls')
 
 
                 except Exception as e:
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
+                    os.system('cls')
 
             case 5:
                 #Consulta por paciente + periodo (cpf + dt inicial + dt final)
@@ -831,13 +868,18 @@ class ConsultaDAO:
 
                                     else:
                                         print("Operação cancelada pelo usuário.")
+                                        time.sleep(1)
+                                        os.system('cls')
 
                                 input("\nPressione uma tecla para voltar ao menu principal...")
+                                os.system('cls')
 
 
                 except Exception as e:
+                    os.system('cls')
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
+
 
             case 6:
                 #Consulta por médico + periodo (crm + dt inicial + dt final)
@@ -911,13 +953,17 @@ class ConsultaDAO:
 
                                     else:
                                         print("Operação cancelada pelo usuário.")
+                                        time.sleep(1)
+                                        os.system('cls')
 
                                 input("\nPressione uma tecla para voltar ao menu principal...")
+                                os.system('cls')
 
 
                 except Exception as e:
+                    os.system('cls')
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
 
             case 7:
                 # Consulta por periodo + horário (dt inicial + dt final + hr inicial + hr final)
@@ -985,17 +1031,22 @@ class ConsultaDAO:
 
                                 else:
                                     print("Operação cancelada pelo usuário.")
+                                    time.sleep(1)
+                                    os.system('cls')
 
                             input("\nPressione uma tecla para voltar ao menu principal...")
+                            os.system('cls')
 
 
                 except Exception as e:
+                    os.system('cls')
                     print("Erro: ", e)
-                    time.sleep(2)
+                    input("Pressione uma  tecla para continuar...")
             case 0:
                 pass
 
             case _:
+                os.system('cls')
                 print("Opção Inválida!")
                 time.sleep(3)
 

@@ -53,6 +53,7 @@ class PacienteDAO:
                 tabela = tabulate(resultado, headers=colunas, tablefmt='grid')
                 display(tabela)
                 input("\nPressione uma tecla para continuar...")
+                os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
@@ -97,6 +98,7 @@ class PacienteDAO:
                         print("Operação cancelada pelo usuário.")
 
                 input("\nPressione uma tecla para continuar...")
+                os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
@@ -138,12 +140,15 @@ class PacienteDAO:
                     print("Cadastro excluido com sucesso!")
                     time.sleep(2)
                     input("Pressione uma tecla para continuar...")
+                    os.system('cls')
                 elif exclusao.upper() == "N":
                     print("Retornando ao menu principal...")
                     time.sleep(2)
+                    os.system('cls')
                 else:
                     print("Digito inválido!\nRetornando ao menu principal...")
                     time.sleep(2)
+                    os.system('cls')
 
         except Exception as e:
             print("Erro: ", e)
